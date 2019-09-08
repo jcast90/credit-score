@@ -16,8 +16,8 @@ const CreditScores = ({ bureauScores }) => {
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell> Bureau </TableCell>
-          <TableCell> Score </TableCell>
+          <TableCell>Bureau</TableCell>
+          <TableCell>Score</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>

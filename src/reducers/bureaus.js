@@ -7,10 +7,10 @@ import { get, pick } from 'lodash'
 
 import { combineReducers } from 'redux'
 
-const allIds = (state = [], { type, payload }) => {
-  switch (type) {
+const allIds = (state = [], action = { type: '' }) => {
+  switch (action.type) {
     case FETCH_REPORT_SUCCESS:
-      return payload.map(bureau =>
+      return action.payload.map(bureau =>
         get(bureau, 'score_details[0].credit_score_id'),
       )
     case FETCH_REPORT_PENDING:
@@ -20,10 +20,10 @@ const allIds = (state = [], { type, payload }) => {
   }
 }
 
-const byId = (state = {}, { type, payload }) => {
-  switch (type) {
+const byId = (state = {}, action = { type: '' }) => {
+  switch (action.type) {
     case FETCH_REPORT_SUCCESS:
-      return payload.reduce((bureaus, bureau) => {
+      return action.payload.reduce((bureaus, bureau) => {
         const details = get(bureau, 'score_details[0]')
         if (!details) return bureaus
 
