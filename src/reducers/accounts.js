@@ -1,9 +1,4 @@
-import {
-  FETCH_REPORT_ERROR,
-  FETCH_REPORT_PENDING,
-  FETCH_REPORT_SUCCESS,
-  SET_FILTER_BY_BUREAU,
-} from '../actions'
+import * as TYPES from '../actions'
 
 import { ACCOUNTS_PER_PAGE_OPTIONS } from '../common/config'
 import { combineReducers } from 'redux'
@@ -28,12 +23,12 @@ const flattenBureauAccounts = bureauData => {
 
 const allIds = (state = [], action = { type: '' }) => {
   switch (action.type) {
-    case FETCH_REPORT_SUCCESS:
+    case TYPES.FETCH_REPORT_SUCCESS:
       return flattenBureauAccounts(action.payload).map(
         account => account.number,
       )
-    case FETCH_REPORT_PENDING:
-    case FETCH_REPORT_ERROR:
+    case TYPES.FETCH_REPORT_PENDING:
+    case TYPES.FETCH_REPORT_ERROR:
     default:
       return state
   }
@@ -41,13 +36,13 @@ const allIds = (state = [], action = { type: '' }) => {
 
 const byId = (state = {}, action = { type: '' }) => {
   switch (action.type) {
-    case FETCH_REPORT_SUCCESS:
+    case TYPES.FETCH_REPORT_SUCCESS:
       return flattenBureauAccounts(action.payload).reduce((byId, account) => {
         byId[account.number] = account
         return byId
       }, {})
-    case FETCH_REPORT_PENDING:
-    case FETCH_REPORT_ERROR:
+    case TYPES.FETCH_REPORT_PENDING:
+    case TYPES.FETCH_REPORT_ERROR:
     default:
       return state
   }
@@ -57,28 +52,39 @@ const filters = (
   state = {
     activePage: 0,
     activeBureau: null,
-    perPageCount: ACCOUNTS_PER_PAGE_OPTIONS[0],
+    rowsPerPage: ACCOUNTS_PER_PAGE_OPTIONS[0],
   },
   action = { type: '' },
 ) => {
   switch (action.type) {
-    case FETCH_REPORT_SUCCESS:
+    case TYPES.FETCH_REPORT_SUCCESS:
       return {
         ...state,
-        activePage: 1,
+        activePage: 0,
       }
-    case SET_FILTER_BY_BUREAU:
+    case TYPES.SET_FILTER_BY_BUREAU:
       const { activeBureau: prevBureauFilter } = state
       const selectedFilter = action.payload
       // removes the filter if already included, otherwise add
       return {
         ...state,
-        activePage: 1,
+        activePage: 0,
         activeBureau:
           prevBureauFilter === selectedFilter ? null : selectedFilter,
       }
-    case FETCH_REPORT_PENDING:
-    case FETCH_REPORT_ERROR:
+    case TYPES.SET_ACTIVE_PAGE:
+      return {
+        ...state,
+        activePage: action.payload,
+      }
+    case TYPES.SET_ACCOUNTS_SHOWN_PER_PAGE:
+      return {
+        ...state,
+        activePage: 0,
+        rowsPerPage: action.payload,
+      }
+    case TYPES.FETCH_REPORT_PENDING:
+    case TYPES.FETCH_REPORT_ERROR:
     default:
       return state
   }

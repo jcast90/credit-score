@@ -17,17 +17,18 @@ import {
   setActivePage,
 } from '../actions'
 
+import { ACCOUNTS_PER_PAGE_OPTIONS } from '../common/config'
 import { connect } from 'react-redux'
 
 class Accounts extends PureComponent {
   renderButtons() {
-    const { bureaus, setActiveBureau } = this.props
+    const { activeBureau, bureaus, setActiveBureau } = this.props
     return bureaus.map(bureau => {
       return (
         <Grid item key={bureau} style={{ margin: '25px' }}>
           <Button
             variant='contained'
-            color='primary'
+            color={activeBureau === bureau ? 'primary' : ''}
             onClick={() => setActiveBureau(bureau)}
           >
             {bureau}
@@ -37,8 +38,16 @@ class Accounts extends PureComponent {
     })
   }
 
+  handlerPageChange = (e, newPage) => {
+    this.props.setActivePage(newPage)
+  }
+
+  handleRowChange = e => {
+    this.props.setAccountsShownPerPage(e.target.value)
+  }
+
   render() {
-    const { accounts } = this.props
+    const { activePage, accounts, rowsPerPage, totalCount } = this.props
     return (
       <React.Fragment>
         <Grid
@@ -60,8 +69,8 @@ class Accounts extends PureComponent {
             </TableRow>
           </TableHead>
           <TableBody>
-            {accounts.map(account => (
-              <TableRow key={account.number}>
+            {accounts.map((account, idx) => (
+              <TableRow key={`${account.number}-${idx}`}>
                 <TableCell>{account.name}</TableCell>
                 <TableCell>{account.number}</TableCell>
                 <TableCell>
@@ -77,21 +86,21 @@ class Accounts extends PureComponent {
             ))}
           </TableBody>
         </Table>
-        {/* <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component='div'
-        count={accountLength}
-        rowsPerPage={rowsPerPage}
-        page={currentPage}
-        backIconButtonProps={{
-          'aria-label': 'previous page',
-        }}
-        nextIconButtonProps={{
-          'aria-label': 'next page',
-        }}
-        onChangePage={this.handleChangePage}
-        onChangeRowsPerPage={this.handleRowChange}
-      /> */}
+        <TablePagination
+          component='div'
+          count={totalCount}
+          rowsPerPage={rowsPerPage}
+          page={activePage}
+          backIconButtonProps={{
+            'aria-label': 'previous page',
+          }}
+          nextIconButtonProps={{
+            'aria-label': 'next page',
+          }}
+          onChangePage={this.handlerPageChange}
+          onChangeRowsPerPage={this.handleRowChange}
+          rowsPerPageOptions={ACCOUNTS_PER_PAGE_OPTIONS}
+        />
       </React.Fragment>
     )
   }
@@ -99,6 +108,10 @@ class Accounts extends PureComponent {
 
 const mapStateToProps = state => ({
   accounts: selectors.accounts.getVisibleAccounts(state),
+  activePage: selectors.accounts.getActivePage(state),
+  activeBureau: selectors.accounts.getActiveBureau(state),
+  totalCount: selectors.accounts.getTotalVisibleCount(state),
+  rowsPerPage: selectors.accounts.getRowsPerPage(state),
   bureaus: selectors.bureaus.getNames(state),
 })
 
