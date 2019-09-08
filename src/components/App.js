@@ -1,15 +1,11 @@
-import React, { Component } from 'react';
-import { Container } from '@material-ui/core';
-import Reports from './Reports';
+import { Container } from '@material-ui/core'
+import React from 'react'
+import Reports from './Reports'
 
-class App extends Component {
-    render() {
-        return (
-            <Container maxWidth="lg">
-                <Reports />
-            </Container>
-        );
-    }
-}
+const App = () => (
+  <Container maxWidth='lg'>
+    <Reports />
+  </Container>
+)
 
-export default App;
+export default App

@@ -1,21 +1,23 @@
-import reports from '../api';
-import _ from 'lodash';
+import { getReportsData } from '../api'
+import isApiError from '../lib/isApiError'
 
-export const fetchScores = () => async (dispatch, getState) => {
-    await dispatch(fetchReports());
-
-    const reports = getState().reports[0];
-    const resp = reports.map( report => {
-        const { bureau, score } = report.score_details[0];
-        return { bureau, score}
-    })
-
-    dispatch({ type: 'FETCH_SCORES', payload: resp });
+export const FETCH_REPORT_PENDING = 'FETCH_REPORT_PENDING'
+export const bootstrapApp = () => async dispatch => {
+  dispatch({ type: 'FETCH_REPORT_PENDING' })
+  await dispatch(fetchReports)
 }
 
-export const fetchReports = () => async dispatch => _fetchReports(dispatch)
+export const FETCH_REPORT_SUCCESS = 'FETCH_REPORT_SUCCESS'
+export const FETCH_REPORT_ERROR = 'FETCH_REPORT_ERROR'
+export const fetchReports = async dispatch => {
+  const { statusCode, body } = await getReportsData()
 
-const _fetchReports = _.memoize( async dispatch => {
-    const response = await reports();
-    dispatch({ type: 'FETCH_REPORT', payload: response})
-})
+  if (isApiError(statusCode)) {
+    dispatch({ type: FETCH_REPORT_ERROR })
+  } else {
+    dispatch({
+      type: FETCH_REPORT_SUCCESS,
+      payload: body,
+    })
+  }
+}
