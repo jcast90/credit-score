@@ -1,8 +1,8 @@
-import { combineReducers } from 'redux';
-import fetchReports from './fetchReports';
-import fetchScores from './fetchScores';
+import accounts from './accounts'
+import bureaus from './bureaus'
+import { combineReducers } from 'redux'
 
 export default combineReducers({
-    reports: fetchReports,
-    scores: fetchScores
-});
+  bureaus,
+  accounts,
+})

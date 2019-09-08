@@ -1,27 +1,27 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Container } from '@material-ui/core';
-import { fetchReports, fetchScores } from "../actions";
-import CreditScores from './CreditScores';
-import Accounts from './Accounts';
+import React, { PureComponent } from 'react'
 
-class Reports extends Component {
-    componentDidMount(){
-        this.props.fetchReports();
-    }
+import Accounts from './Accounts'
+import { Container } from '@material-ui/core'
+import CreditScores from './CreditScores'
+import { bootstrapApp } from '../actions'
+import { connect } from 'react-redux'
 
-    render() {
-        return (
-            <Container maxWidth="lg">
-                <CreditScores />
-                <Accounts reports={this.props.reports} />
-            </Container>
-        );
-    }
+class Reports extends PureComponent {
+  componentDidMount() {
+    this.props.bootstrapApp()
+  }
+
+  render() {
+    return (
+      <Container maxWidth='lg'>
+        <CreditScores />
+        <Accounts />
+      </Container>
+    )
+  }
 }
 
-const mapStateToProps = state => {
-    return { reports: state.reports[0] }
-}
-
-export default connect(mapStateToProps, { fetchReports, fetchScores })(Reports);
+export default connect(
+  null,
+  { bootstrapApp },
+)(Reports)
