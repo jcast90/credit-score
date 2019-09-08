@@ -1,6 +1,5 @@
 import * as selectors from '../selectors'
 
-import React, { PureComponent } from 'react'
 import {
   Table,
   TableBody,
@@ -9,6 +8,7 @@ import {
   TableRow,
 } from '@material-ui/core'
 
+import React from 'react'
 import { connect } from 'react-redux'
 
 const CreditScores = ({ bureauScores }) => {
