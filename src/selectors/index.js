@@ -1,3 +1,4 @@
-import * as bureauSelectors from './bureauSelectors'
+import * as accounts from './accountSelectors'
+import * as bureaus from './bureauSelectors'
 
-export { bureauSelectors }
+export { accounts, bureaus }

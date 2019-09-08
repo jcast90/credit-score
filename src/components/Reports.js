@@ -1,13 +1,12 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 
-// TODO: re-enable accounts once the reducers are cleaned up
 import Accounts from './Accounts'
 import { Container } from '@material-ui/core'
 import CreditScores from './CreditScores'
 import { bootstrapApp } from '../actions'
 import { connect } from 'react-redux'
 
-class Reports extends Component {
+class Reports extends PureComponent {
   componentDidMount() {
     this.props.bootstrapApp()
   }
@@ -16,8 +15,7 @@ class Reports extends Component {
     return (
       <Container maxWidth='lg'>
         <CreditScores />
-        {/* TODO: re-enable accounts once the reducers are cleaned up */}
-        {/* <Accounts reports={this.props.reports} /> */}
+        <Accounts />
       </Container>
     )
   }

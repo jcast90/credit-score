@@ -1,3 +1,5 @@
+import * as selectors from '../selectors'
+
 import {
   Button,
   Grid,
@@ -8,100 +10,37 @@ import {
   TablePagination,
   TableRow,
 } from '@material-ui/core'
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
+import {
+  setAccountsShownPerPage,
+  setActiveBureau,
+  setActivePage,
+} from '../actions'
 
-class Accounts extends Component {
-  state = {
-    accounts: [],
-    selectedAccount: 'equifax',
-    currentPage: 0,
-    rowsPerPage: 5,
-  }
+import { connect } from 'react-redux'
 
-  componentDidUpdate(prev, next) {
-    if (prev.reports !== this.props.reports) {
-      let bureauAccounts = {}
-      this.props.reports.map(account => {
-        const bureau = account.bureau.toLowerCase()
-        return (bureauAccounts[bureau] = account.accounts)
-      })
-      this.setState({ accounts: [bureauAccounts] })
-    }
-  }
-
-  selectedAccount = (bureau = 'equifax') => {
-    this.setState({ selectedAccount: bureau, currentPage: 0 })
-  }
-
-  renderButtons = () => {
-    if (this.state.accounts.length > 0) {
-      const bureauNames = Object.keys(this.state.accounts[0])
-
-      return bureauNames.map(bureau => {
-        return (
-          <Grid item key={bureau} style={{ margin: '25px' }}>
-            <Button
-              style={
-                this.state.selectedAccount === bureau
-                  ? { backgroundColor: 'red' }
-                  : {}
-              }
-              onClick={() => this.selectedAccount(bureau)}
-              variant='contained'
-              color='primary'
-            >
-              {bureau}
-            </Button>
-          </Grid>
-        )
-      })
-    }
-
-    return null
-  }
-  handleChangePage = (e, newPage) => {
-    this.setState({ currentPage: newPage })
-  }
-
-  handleRowChange = e => {
-    this.setState({ rowsPerPage: e.target.value, currentPage: 0 })
-  }
-
-  renderAccounts = () => {
-    if (this.state.accounts.length > 0) {
-      const { accounts, selectedAccount, currentPage, rowsPerPage } = this.state
-
-      return accounts[0][selectedAccount]
-        .slice(
-          currentPage * rowsPerPage,
-          currentPage * rowsPerPage + rowsPerPage,
-        )
-        .map((account, index) => {
-          return (
-            <TableRow key={`${account.number}-${index}`}>
-              <TableCell>{account.name}</TableCell>
-              <TableCell>{account.number}</TableCell>
-              <TableCell>
-                {selectedAccount === 'equifax' ? account.balance : '-'}
-              </TableCell>
-              <TableCell>
-                {selectedAccount === 'transunion' ? account.balance : '-'}
-              </TableCell>
-              <TableCell>
-                {selectedAccount === 'experian' ? account.balance : '-'}
-              </TableCell>
-            </TableRow>
-          )
-        })
-    }
+class Accounts extends PureComponent {
+  renderButtons() {
+    const { bureaus, setActiveBureau } = this.props
+    return bureaus.map(bureau => {
+      return (
+        <Grid item key={bureau} style={{ margin: '25px' }}>
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={() => setActiveBureau(bureau)}
+          >
+            {bureau}
+          </Button>
+        </Grid>
+      )
+    })
   }
 
   render() {
-    const { accounts, selectedAccount, currentPage, rowsPerPage } = this.state
-    const accountLength = accounts[0] ? accounts[0][selectedAccount].length : 0
-
+    const { accounts } = this.props
     return (
-      <div>
+      <React.Fragment>
         <Grid
           container
           direction='row'
@@ -120,26 +59,56 @@ class Accounts extends Component {
               <TableCell>Experian</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>{this.renderAccounts()}</TableBody>
+          <TableBody>
+            {accounts.map(account => (
+              <TableRow key={account.number}>
+                <TableCell>{account.name}</TableCell>
+                <TableCell>{account.number}</TableCell>
+                <TableCell>
+                  {account.bureau === 'Equifax' ? account.balance : '--'}
+                </TableCell>
+                <TableCell>
+                  {account.bureau === 'TransUnion' ? account.balance : '--'}
+                </TableCell>
+                <TableCell>
+                  {account.bureau === 'Experian' ? account.balance : '--'}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component='div'
-          count={accountLength}
-          rowsPerPage={rowsPerPage}
-          page={currentPage}
-          backIconButtonProps={{
-            'aria-label': 'previous page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'next page',
-          }}
-          onChangePage={this.handleChangePage}
-          onChangeRowsPerPage={this.handleRowChange}
-        />
-      </div>
+        {/* <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component='div'
+        count={accountLength}
+        rowsPerPage={rowsPerPage}
+        page={currentPage}
+        backIconButtonProps={{
+          'aria-label': 'previous page',
+        }}
+        nextIconButtonProps={{
+          'aria-label': 'next page',
+        }}
+        onChangePage={this.handleChangePage}
+        onChangeRowsPerPage={this.handleRowChange}
+      /> */}
+      </React.Fragment>
     )
   }
 }
 
-export default Accounts
+const mapStateToProps = state => ({
+  accounts: selectors.accounts.getVisibleAccounts(state),
+  bureaus: selectors.bureaus.getNames(state),
+})
+
+const mapDispatchToProps = {
+  setActivePage,
+  setActiveBureau,
+  setAccountsShownPerPage,
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Accounts)

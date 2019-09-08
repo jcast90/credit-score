@@ -21,3 +21,21 @@ export const fetchReports = async dispatch => {
     })
   }
 }
+
+export const SET_ACTIVE_PAGE = 'SET_ACTIVE_PAGE'
+export const setActivePage = page => ({
+  type: SET_ACTIVE_PAGE,
+  payload: page,
+})
+
+export const SET_ACCOUNTS_SHOWN_PER_PAGE = 'SET_ACCOUNTS_SHOWN_PER_PAGE'
+export const setAccountsShownPerPage = count => ({
+  type: SET_ACCOUNTS_SHOWN_PER_PAGE,
+  payload: count,
+})
+
+export const SET_FILTER_BY_BUREAU = 'SET_FILTER_BY_BUREAU'
+export const setActiveBureau = bureau => ({
+  type: SET_FILTER_BY_BUREAU,
+  payload: bureau,
+})

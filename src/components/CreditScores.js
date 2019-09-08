@@ -1,6 +1,7 @@
 import * as selectors from '../selectors'
 
 import {
+  LinearProgress,
   Table,
   TableBody,
   TableCell,
@@ -12,7 +13,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 const CreditScores = ({ bureauScores }) => {
-  return !(bureauScores && bureauScores.length) ? null : (
+  return !(bureauScores && bureauScores.length) ? (
+    <LinearProgress />
+  ) : (
     <Table>
       <TableHead>
         <TableRow>
@@ -33,7 +36,7 @@ const CreditScores = ({ bureauScores }) => {
 }
 
 const mapStateToProps = state => ({
-  bureauScores: selectors.bureauSelectors.getScores(state),
+  bureauScores: selectors.bureaus.getScores(state),
 })
 
 export default connect(mapStateToProps)(CreditScores)
